@@ -5,10 +5,10 @@ const router = express.Router();
 
 
 router.post('/',createHotel);
-router.post('/:id',updateHotel);
-router.post('/:id',deleteHotel);
-router.post('/:id',getHotel);
-router.post('/',getHotels);
+router.put('/:id',updateHotel);
+router.delete('/:id',deleteHotel);
+router.get('/:id',getHotel);
+router.get('/',getHotels);
 
 
 export default router;

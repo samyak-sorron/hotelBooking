@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const hotelSchema = new Schema({
-  rating: { type: Number , min: 1, max: 5, required: true }, 
+  rating: { type: Number , min: 1, max: 5 }, 
 
   name: { type: String, required: true },
   type: { type: String, required: true },

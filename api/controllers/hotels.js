@@ -1,5 +1,4 @@
 import Hotels from "../models/Hotels.js";
-// import Room from "../models/Room.js";
 
 export const createHotel = async (req, res, next) => {
   try {
@@ -47,11 +46,13 @@ export const deleteHotel = async (req, res, next) => {
 };
 
 export const getHotel = async (req, res, next) => {
+  
   try {
-    const hotel = await Hotels.findById(req.params.id).populate("rooms").exec();
+    const hotel = await Hotels.findById(req.params.id).populate("Room").exec();
     if (!hotel) {
       res.status(404).json({ message: "Hotel not found" });
     } else {
+      console.log("here");
       res.status(200).json({ message: "Hotel found", data: hotel });
     }
   } catch (err) {
