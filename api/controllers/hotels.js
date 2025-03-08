@@ -53,7 +53,6 @@ export const getHotel = async (req, res, next) => {
     if (!hotel) {
       next(createError(404, "Hotel not found"));
     } else {
-      console.log("here");
       res.status(200).json(hotel);
     }
   } catch (err) {

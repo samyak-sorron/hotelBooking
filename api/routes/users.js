@@ -1,13 +1,14 @@
 import express from 'express';
+import { deleteUser, getUser, getUsers, updateUser } from '../controllers/users';
+import { verifyAdmin, verifyUser } from '../utils/verifyToken';
 
 const router = express.Router();
 
+router.put('/:id',verifyUser,updateUser);
+router.delete('/:id',verifyUser,deleteUser);
+router.get('/:id',verifyUser,getUser);
 
-router.post('/',createHotel);
-router.put('/:id',updateHotel);
-router.delete('/:id',deleteHotel);
-router.get('/:id',getHotel);
-router.get('/',getHotels);
+router.get('/',verifyAdmin,getUsers);
 
 
 export default router;

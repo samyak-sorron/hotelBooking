@@ -2,12 +2,16 @@ import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import cors from "cors";
+
 
 import authRoute from "./routes/auth.js"
 import hotelRoute from "./routes/hotels.js"
 
-const app = express();
+const app = express();  
+// app.use(cors({ origin: 'http://localhost:3000' }));
+
 dotenv.config()
 
 
@@ -33,7 +37,14 @@ app.use("/api/hotels",hotelRoute)
 app.use("/api/rooms",authRoute)
 
 app.use((err, req, res, next) => {
-    return res.status(500).json({ message: "Internal Server Error" });
+    const errorStatus=err.status || 500;
+    const errorMessage=err.message || "something went wrong";
+    return res.status(errorStatus).json({
+        success:false,
+        status:errorStatus,
+        message:errorMessage,
+        stack:err.stack
+    })
 });
 
 
