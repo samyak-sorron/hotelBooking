@@ -26,14 +26,6 @@ export const updateHotel = async (req, res, next) => {
 
 export const deleteHotel = async (req, res, next) => {
   try {
-    const hotel = await Hotels.findById(req.params.id).exec();
-    if (!hotel) {
-      next(createError(404, "Hotel not found"));
-      return;
-    }
-
-    // await Room.deleteMany({ _id: { $in: hotel.rooms } });
-
     const deletedHotel = await Hotels.findByIdAndDelete(req.params.id).exec();
 
     if (!deletedHotel) {
@@ -49,7 +41,7 @@ export const deleteHotel = async (req, res, next) => {
 export const getHotel = async (req, res, next) => {
   
   try {
-    const hotel = await Hotels.findById(req.params.id).populate("Room").exec();
+    const hotel = await Hotels.findById(req.params.id).exec();
     if (!hotel) {
       next(createError(404, "Hotel not found"));
     } else {

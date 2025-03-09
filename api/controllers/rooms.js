@@ -1,61 +1,65 @@
-import Room from "../models/Room";
-
+import Rooms from "../models/room.js";
+import Hotel from "../models/Hotels.js";
+import { createError } from "../utils/error.js";
 
 export const createRoom = async (req, res, next) => {
-  const hotelId=req.prams.hotelid;
-  const newRoom=new Room(req.body);
+  const hotelId = req.params.hotelid;
+  const newRoom = new Rooms(req.body);
   try {
-    const savedRoom=await newRoom.save();
-    try{
-      await hotelId.findByIdAndUpdate(hotelId,{
-        $push:{rooms:savedRoom._id},
+    const savedRoom = await newRoom.save();
+    try {
+      await Hotel.findByIdAndUpdate(hotelId, {
+        $push: { rooms: savedRoom._id },
       });
-
-    }catch(err){
-      next(err);
-    }
-    res.status(200),json(savedRoom);
     } catch (err) {
       next(err);
     }
+    res.status(201).json(savedRoom);
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const updateRoom = async (req, res, next) => {
   try {
-    const Room = await Room.findByIdAndUpdate(req.params.id, {$set:req.body}, { new: true });
-    if (!Room) {
-      res.status(404).json({ message: "Room not found" });
+    const updatedRoom = await Rooms.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    if (!updatedRoom) {
+      next(createError(404, "Room not found"));
     } else {
-      res.status(200).json({ message: "Room updated successfully", data: Room });
-    }
-  } catch (err) {
-    next(err); 
-  }
-};
-
-export const deleteRoom = async (req, res, next) => {
-  try {
-
-    const deletedRoom = await Room.findByIdAndDelete(req.params.id).exec();
-
-    if (!deletedRoom) {
-      res.status(404).json({ message: "Room not found" });
-    } else {
-      res.status(200).json({ message: "Room deleted successfully", data: deletedRoom.name });
+      res.status(200).json({ message: "Room updated successfully", data: updatedRoom });
     }
   } catch (err) {
     next(err);
   }
 };
 
-export const getRoom = async (req, res, next) => {
-  
+export const deleteRoom = async (req, res, next) => {
+  const hotelId = req.params.hotelId;
   try {
-    const Room = await Room.findById(req.params.id).populate("Room").exec();
-    if (!Room) {
-      res.status(404).json({ message: "Room not found" });
+    await Rooms.findByIdAndDelete(req.params.id);
+    try {
+      if(!hotelId){
+        next(createError(404, "Hotel not found"));
+      }
+      await Hotel.findByIdAndUpdate(hotelId, {
+        $pull: { rooms: req.params.id },
+      });
+    } catch (err) {
+      next(err);
+    }
+    res.status(200).json("Room has been deleted.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getRoom = async (req, res, next) => {
+  try {
+    const room = await Rooms.findById(req.params.id).populate("hotel").exec();
+    if (!room) {
+      next(createError(404, "Room not found"));
     } else {
-      res.status(200).json({ message: "Room found", data: Room });
+      res.status(200).json({ message: "Room found", data: room });
     }
   } catch (err) {
     next(err);
@@ -64,11 +68,11 @@ export const getRoom = async (req, res, next) => {
 
 export const getRooms = async (req, res, next) => {
   try {
-    const Rooms = await Room.find().exec();
-    if (!Rooms || Rooms.length === 0) {
-      res.status(404).json({ message: "No Rooms found" });
+    const rooms = await Rooms.find().exec();
+    if (!rooms || rooms.length === 0) {
+      next(createError(404, "Rooms not found"));
     } else {
-      res.status(200).json({ message: "Rooms found", data: Rooms });
+      res.status(200).json({ message: "Rooms found", data: rooms });
     }
   } catch (err) {
     next(err);

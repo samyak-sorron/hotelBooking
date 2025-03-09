@@ -8,6 +8,8 @@ import cors from "cors";
 
 import authRoute from "./routes/auth.js"
 import hotelRoute from "./routes/hotels.js"
+import userRoute from "./routes/users.js"
+import roomsRoute from "./routes/rooms.js"
 
 const app = express();  
 // app.use(cors({ origin: 'http://localhost:3000' }));
@@ -32,9 +34,9 @@ mongoose.connection.on("error", (err) => {
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth",authRoute)
-app.use("/api/users",authRoute)
+app.use("/api/users",userRoute)
 app.use("/api/hotels",hotelRoute)
-app.use("/api/rooms",authRoute)
+app.use("/api/rooms",roomsRoute)
 
 app.use((err, req, res, next) => {
     const errorStatus=err.status || 500;

@@ -10,7 +10,10 @@ const hotelSchema = new Schema({
   distance: { type: Number, required: true }, 
   description: { type: String, required: true },
   photos: [{ type: String }],
-  rooms: [{ type: Schema.Types.ObjectId, ref: 'Room' }] ,
+  rooms: {
+    type: [String],
+  },
+  // rooms: [{ type: Schema.Types.ObjectId, ref: 'Room' }] ,
   chepestPrice: { type: Number, required: true },
   featured: { type: Boolean, default: false }
 });
