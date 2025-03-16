@@ -53,17 +53,25 @@ export const getHotel = async (req, res, next) => {
 };
 
 export const getHotels = async (req, res, next) => {
+  const { min, max, ...others } = req.query;
+  const limit = parseInt(req.query.limit) || 10;
+
+  // Set default values for min and max if they are not provided
+  const minPrice = min ? parseFloat(min) : 1;
+  const maxPrice = max ? parseFloat(max) : 999;
+
   try {
-    const hotels = await Hotels.find(req.query).exec();
-    if (!hotels || hotels.length === 0) {
-      next(createError(404, "No hotels found"));
-    } else {
-      res.status(200).json(hotels);
-    }
+    const hotels = await Hotels.find({
+      cheapestPrice: { $gte: minPrice, $lte: maxPrice },
+      ...others,  // Add any other query params as filter
+    }).limit(limit).exec();
+
+    res.status(200).json(hotels);
   } catch (err) {
     next(err);
   }
 };
+
 
 export const countByCity = async (req, res, next) => {
   const cities = req.query.cities.split(",");
@@ -88,8 +96,6 @@ export const countByType = async (req, res, next) => {
       {type:"hotel",count:hotelCount},
       {type:"resort",count:resortCount},
       {type:"guest house",count:guestHouseCount},
-      {type:"villa",count:villaCount},
-      {type:"cabin",count:cabinCount}
     ]);
   } catch (err) {
     next(err);

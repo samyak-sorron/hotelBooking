@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 const useFetch = (url) => {
   const [data, setData] = useState([]);
@@ -7,32 +7,40 @@ const useFetch = (url) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetch(url)
-      .then(res =>{
-        if(!res.ok){
-          throw Error('Could not fetch the data for that resource')
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error("Could not fetch the data for that resource");
         }
-        if(!res.json()){
-          throw Error('No data available')
-        }
-        data(res.json())
-      })
-      .catch (err=> setError(err))
-      .finally(()=> setLoading(false))
-    }
+        const data = await res.json();
+        setData(data);
+      } catch (err) {
+        setError(err); 
+      } finally {
+        setLoading(false); 
+      }
+    };
+
     fetchData();
-  }, [url])
+  }, [url]);
 
-  const refetch =async () => {
-    await fetch(url)
-    .then(res => setData(res.json()))
-    .catch (err=> setError(err))
-    .finally(()=> setLoading(false))
+  const refetch = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error("Could not fetch the data for that resource");
+      }
+      const data = await res.json();
+      setData(data);
+    } catch (err) {
+      setError(err); 
+    } finally {
+      setLoading(false);
     }
+  };
 
-  return () => {
-    data, loading, error,refetch
-  }
-}
+  return { data, loading, error, refetch };
+};
 
-export default useFetch
+export default useFetch;

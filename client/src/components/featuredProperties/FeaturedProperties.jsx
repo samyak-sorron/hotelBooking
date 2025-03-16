@@ -1,6 +1,13 @@
+import useFetch from "../../hooks/useFetch";
 import "./featuredProperties.css";
 
 const FeaturedProperties = () => {
+
+  const url=`${import.meta.env.VITE_URL}/hotels?featured=true`
+  const {data, loading, error} = useFetch(url);
+
+  console.log(data);
+  
   return (
     <div className="fp">
       <div className="fpItem">

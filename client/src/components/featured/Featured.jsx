@@ -3,44 +3,21 @@ import useFetch from "../../hooks/useFetch.js";
 import "./featured.css";
 
 const Featured = () => {
-  const [data, setdata] = useState([])
 
   const url=`${import.meta.env.VITE_URL}/hotels/countByCity?cities=Jabalpur,Mumbai,Delhi`
-  // const {data, loading, error} = useFetch(url);
+  const {data, loading, error} = useFetch(url);
   
-  useEffect(() => {
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw Error("Could not fetch the data for that resource");
-        }
-        console.log(res);
-        // return res.json();     
-        
-      })
-      .then((data) =>{ 
-        if(data.status==='success'){
-          setdata(data);
-        }else{
-          throw Error('No data available')
-        }
-        
-      })
-      .catch((err) => console.log(err));
-  }, [url]);
-
-  console.log(data)
   return (
     <div className="featured">
-      <div className="featuredItem">
+      {loading ? "Loading pls wait":<><div className="featuredItem">
         <img
           src="https://cf.bstatic.com/xdata/images/city/max500/957801.webp?k=a969e39bcd40cdcc21786ba92826063e3cb09bf307bcfeac2aa392b838e9b7a5&o="
           alt=""
           className="featuredImg"
         />
         <div className="featuredTitles">
-          <h1>Dublin</h1>
-          <h2>123 properties</h2>
+          <h1>Jabalpur</h1>
+          <h2>{data[0]} properties</h2>
         </div>
       </div>
       
@@ -51,8 +28,8 @@ const Featured = () => {
           className="featuredImg"
         />
         <div className="featuredTitles">
-          <h1>Reno</h1>
-          <h2>533 properties</h2>
+          <h1>Mumbai</h1>
+          <h2>{data[1]} properties</h2>
         </div>
       </div>
       <div className="featuredItem">
@@ -62,10 +39,10 @@ const Featured = () => {
           className="featuredImg"
         />
         <div className="featuredTitles">
-          <h1>Austin</h1>
-          <h2>532 properties</h2>
+          <h1>Delhi</h1>
+          <h2>{data[2]} properties</h2>
         </div>
-      </div>
+      </div></>}
     </div>
   );
 };
