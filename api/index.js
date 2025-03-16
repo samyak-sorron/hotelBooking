@@ -12,7 +12,6 @@ import userRoute from "./routes/users.js"
 import roomsRoute from "./routes/rooms.js"
 
 const app = express();  
-// app.use(cors({ origin: 'http://localhost:3000' }));
 
 dotenv.config()
 
@@ -31,6 +30,8 @@ mongoose.connection.on("error", (err) => {
 });
 
 // Middlewares
+app.use(cors());
+
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth",authRoute)

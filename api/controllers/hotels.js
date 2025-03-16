@@ -54,12 +54,43 @@ export const getHotel = async (req, res, next) => {
 
 export const getHotels = async (req, res, next) => {
   try {
-    const hotels = await Hotels.find().exec();
+    const hotels = await Hotels.find(req.query).exec();
     if (!hotels || hotels.length === 0) {
       next(createError(404, "No hotels found"));
     } else {
       res.status(200).json(hotels);
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const countByCity = async (req, res, next) => {
+  const cities = req.query.cities.split(",");
+  try {
+    const lists = await Promise.all(cities.map(city => {
+      return Hotels.countDocuments({ city: city });
+    }));
+    res.status(200).json(lists);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const countByType = async (req, res, next) => {
+  try {
+    const hotelCount=await Hotels.countDocuments({type:"hotel"})
+    const resortCount=await Hotels.countDocuments({type:"resort"})
+    const guestHouseCount=await Hotels.countDocuments({type:"guest house"})
+    const villaCount=await Hotels.countDocuments({type:"villa"})
+    const cabinCount=await  Hotels.countDocuments({type:"cabin"})
+    res.status(200).json([
+      {type:"hotel",count:hotelCount},
+      {type:"resort",count:resortCount},
+      {type:"guest house",count:guestHouseCount},
+      {type:"villa",count:villaCount},
+      {type:"cabin",count:cabinCount}
+    ]);
   } catch (err) {
     next(err);
   }
